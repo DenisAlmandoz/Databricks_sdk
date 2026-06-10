@@ -5,7 +5,6 @@ from pyspark.sql import SparkSession
 
 from .databricks_api import DatabricksApiIngestor
 from .system_tables import SystemTablesIngestor
-from .azure_monitor import AzureMonitorIngestor
 from .writer import BronzeWriter
 
 
@@ -31,6 +30,7 @@ class BronzeIngestionOrchestrator:
         if azure_log_analytics_workspace_id:
             from azure.identity import DefaultAzureCredential
             from azure.monitor.query import LogsQueryClient
+            from .azure_monitor import AzureMonitorIngestor
 
             credential = DefaultAzureCredential()
             logs_client = LogsQueryClient(credential)
