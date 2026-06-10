@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "databricks-health-service"
+version = "0.1.0"
+description = "Databricks Data Platform Health Service for infrastructure, pipeline, and data product monitoring."
+authors = ["Client Team <client@example.com>"]
+license = "MIT"
+readme = "README.md"
+packages = [
+  { include = "databricks_health" }
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+databricks-sdk = "^0.2.33"
+pandas = "^2.2"
+pyarrow = "^13.0"
+requests = "^2.32"
+azure-identity = "^1.18"
+azure-monitor-query = "^1.1"
+sqlalchemy = "^2.0"
+python-dateutil = "^2.8"
+
+[tool.poetry.dev-dependencies]
+pytest = "^8.4"
+black = "^24.3"
+
+[tool.poetry.scripts]
+health-service = "databricks_health.__main__:main"
