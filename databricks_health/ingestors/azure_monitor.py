@@ -1,8 +1,11 @@
 from datetime import timedelta
-from typing import Optional
 
 import pandas as pd
-from azure.monitor.query import LogsQueryClient
+
+try:
+    from azure.monitor.query import LogsQueryClient
+except ModuleNotFoundError:
+    LogsQueryClient = None  # type: ignore
 
 from .base import BaseIngestor
 
@@ -10,10 +13,15 @@ from .base import BaseIngestor
 class AzureMonitorIngestor(BaseIngestor):
     def __init__(
         self,
-        logs_client: LogsQueryClient,
+        logs_client: "LogsQueryClient",
         workspace_id: str,
         lookback_days: int = 30,
     ):
+        if LogsQueryClient is None:
+            raise ImportError(
+                "AzureMonitorIngestor requires azure-monitor-query. "
+                "Install it with: pip install azure-monitor-query azure-identity"
+            )
         super().__init__(lookback_days)
         self.logs_client = logs_client
         self.workspace_id = workspace_id
