@@ -1,8 +1,6 @@
 from typing import Optional
 
 from databricks.sdk import WorkspaceClient
-from azure.identity import DefaultAzureCredential
-from azure.monitor.query import LogsQueryClient
 from pyspark.sql import SparkSession
 
 from .databricks_api import DatabricksApiIngestor
@@ -23,8 +21,6 @@ class BronzeIngestionOrchestrator:
     ):
         self.spark = SparkSession.builder.getOrCreate()
         self.client = WorkspaceClient(host=databricks_host, token=databricks_token)
-        credential = DefaultAzureCredential()
-        logs_client = LogsQueryClient(credential)
 
         self.spark.sql(f"CREATE CATALOG IF NOT EXISTS {catalog}")
         for schema_name in [schema, "silver", "gold"]:
@@ -33,6 +29,11 @@ class BronzeIngestionOrchestrator:
         self.api_ingestor = DatabricksApiIngestor(self.client, lookback_days)
         self.system_ingestor = SystemTablesIngestor(self.spark, lookback_days)
         if azure_log_analytics_workspace_id:
+            from azure.identity import DefaultAzureCredential
+            from azure.monitor.query import LogsQueryClient
+
+            credential = DefaultAzureCredential()
+            logs_client = LogsQueryClient(credential)
             self.azure_ingestor = AzureMonitorIngestor(
                 logs_client, azure_log_analytics_workspace_id, lookback_days
             )
